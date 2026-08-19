@@ -1,9 +1,0 @@
-modLoader="javafml"
-loaderVersion="[47,)"
-license="MIT"
-
-[[mods]]
-modId="portalgun"
-version="1.0.0"
-displayName="Portal Gun Mod"
-description="Adds portal guns and custom base dimension"
