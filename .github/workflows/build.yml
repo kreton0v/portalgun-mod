@@ -21,12 +21,8 @@ jobs:
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.5'
 
     - name: Build Mod with Gradle
       run: gradle build --no-daemon
-
-    - name: Upload Mod Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: PortalGun-Mod-Jar
-        path: build/libs/*.jar
