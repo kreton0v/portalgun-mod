@@ -8,6 +8,11 @@ archivesBaseName = 'portalgun'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+repositories {
+    maven { url = 'https://maven.minecraftforge.net/' }
+    mavenCentral()
+}
+
 minecraft {
     mappings channel: 'official', version: '1.20.1'
 }
