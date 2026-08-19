@@ -1,0 +1,17 @@
+{
+  "type": "portalgun:pocket_space_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "layers": [
+        { "block": "minecraft:bedrock", "height": 1 },
+        { "block": "minecraft:deepslate", "height": 60 },
+        { "block": "minecraft:stone", "height": 60 },
+        { "block": "minecraft:dirt", "height": 3 },
+        { "block": "minecraft:grass_block", "height": 1 }
+      ],
+      "biome": "minecraft:the_void",
+      "features": false
+    }
+  }
+}
