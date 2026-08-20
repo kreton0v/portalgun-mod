@@ -20,6 +20,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class PortalGunItem extends Item {
+    private BlockPos lastPortalPos = null;
+
     public PortalGunItem(Properties properties) {
         super(properties);
     }
@@ -45,6 +47,7 @@ public class PortalGunItem extends Item {
 
                 ServerLevel serverLevel = (ServerLevel) level;
 
+                // Визуальный луч выстрела
                 Vec3 hitVec = hitResult.getLocation();
                 for (double d = 0; d < 1.0; d += 0.05) {
                     double px = eyePos.x + (hitVec.x - eyePos.x) * d;
@@ -53,45 +56,28 @@ public class PortalGunItem extends Item {
                     serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, px, py, pz, 1, 0, 0, 0, 0);
                 }
 
+                // Звук выстрела
                 serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.5f);
 
-                spawnPortalParticles(serverLevel, portalPos, face);
+                // Создаем сущность портала на стене
+                PortalEntity portal = new PortalEntity(PortalGunMod.PORTAL_ENTITY.get(), serverLevel);
+                portal.setPos(portalPos.getX() + 0.5, portalPos.getY(), portalPos.getZ() + 0.5);
 
-                player.sendSystemMessage(Component.literal("Портал открыт!"));
+                if (lastPortalPos != null) {
+                    // Если прошлый портал уже был — связываем их!
+                    portal.setDestination(lastPortalPos);
+                    player.sendSystemMessage(Component.literal("Портал связан с предыдущим!"));
+                } else {
+                    // Если это первый выстрел — портал ведет в спавн
+                    portal.setDestination(serverLevel.getSharedSpawnPos());
+                    player.sendSystemMessage(Component.literal("Портал открыт! Наступи в него для телепортации."));
+                }
 
-                serverPlayer.teleportTo(
-                    serverLevel,
-                    portalPos.getX() + 0.5,
-                    portalPos.getY(),
-                    portalPos.getZ() + 0.5,
-                    serverPlayer.getYRot(),
-                    serverPlayer.getXRot()
-                );
+                lastPortalPos = portalPos;
+                serverLevel.addFreshEntity(portal);
             }
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
-    }
-
-    private void spawnPortalParticles(ServerLevel level, BlockPos pos, Direction face) {
-        double centerX = pos.getX() + 0.5;
-        double centerY = pos.getY() + 1.0;
-        double centerZ = pos.getZ() + 0.5;
-
-        for (int i = 0; i < 360; i += 15) {
-            double angle = Math.toRadians(i);
-            double r1 = Math.cos(angle) * 0.8;
-            double r2 = Math.sin(angle) * 1.2;
-
-            double px = centerX, py = centerY + r2, pz = centerZ;
-            if (face.getAxis() == Direction.Axis.X) {
-                pz = centerZ + r1;
-            } else {
-                px = centerX + r1;
-            }
-
-            level.sendParticles(ParticleTypes.HAPPY_VILLAGER, px, py, pz, 3, 0.05, 0.05, 0.05, 0.01);
-            level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, px, py, pz, 2, 0.05, 0.05, 0.05, 0.02);
-        }
     }
 }
