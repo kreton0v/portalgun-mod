@@ -1,6 +1,8 @@
 package com.example.portalgun;
 
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -21,5 +23,12 @@ public class PortalGunMod {
     public PortalGunMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(PORTAL_GUN);
+        }
     }
 }
